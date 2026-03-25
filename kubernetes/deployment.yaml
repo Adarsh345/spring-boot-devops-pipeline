@@ -1,0 +1,76 @@
+# Kubernetes Deployment Configuration
+# This tells Kubernetes HOW to run your application
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo
+  labels:
+    app: demo
+    version: v1
+spec:
+  # How many copies of the container to run (for scaling)
+  replicas: 3
+
+  # How Kubernetes finds which pods to manage
+  selector:
+    matchLabels:
+      app: demo
+
+  # Template for each container/pod
+  template:
+    metadata:
+      labels:
+        app: demo
+    spec:
+      containers:
+      - name: demo
+        # Docker image to use (from Docker Hub)
+        image: demo:latest
+        imagePullPolicy: IfNotPresent
+
+        # Expose port
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+
+        # Environment variables from ConfigMap
+        envFrom:
+        - configMapRef:
+            name: demo-config
+
+        # Resource limits (CPU and Memory)
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+
+        # Health checks (Kubernetes will restart if unhealthy)
+        livenessProbe:
+          httpGet:
+            path: /api/status
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+
+        readinessProbe:
+          httpGet:
+            path: /api/status
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 3
+
+        # Graceful shutdown
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "sleep 15"]

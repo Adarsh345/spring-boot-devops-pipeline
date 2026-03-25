@@ -1,0 +1,21 @@
+# Kubernetes Service Configuration
+# This tells Kubernetes HOW to expose your application
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo
+  labels:
+    app: demo
+spec:
+  # Type: ClusterIP = internal only, LoadBalancer = external access
+  type: LoadBalancer
+
+  selector:
+    app: demo
+
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+    name: http

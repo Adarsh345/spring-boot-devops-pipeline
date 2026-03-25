@@ -1,0 +1,31 @@
+# Git and version control
+.git
+.gitignore
+.github
+
+# IDE and editor files
+.vscode
+.idea
+*.iml
+*.iws
+*.ipr
+
+# Documentation
+README.md
+HELP.md
+
+# Build artifacts and cache
+target/
+.docker
+docker-compose.yml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Maven wrapper jars
+mvnw
+mvnw.cmd
+
+# Test files (we don't need tests in production image)
+src/test/
